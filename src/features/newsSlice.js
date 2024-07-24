@@ -9,8 +9,10 @@ const STATUSES = Object.freeze({
 const initialState = {
   articles: [],
   news: [],
+  headings: [],
   articleStatus: STATUSES.IDLE,
-  setNewsStatus: STATUSES.IDLE,
+  newsStatus: STATUSES.IDLE,
+  headingStatus: STATUSES.IDLE,
 };
 
 const newsSlice = createSlice({
@@ -21,19 +23,31 @@ const newsSlice = createSlice({
       state.articles = action.payload;
     },
     setArticleStatus(state, action) {
-      state.status = action.payload;
+      state.articleStatus = action.payload;
     },
-    setNew(state, action) {
+    setNews(state, action) {
       state.news = action.payload;
     },
     setNewsStatus(state, action) {
-      state.setNewsStatus = action.payload;
+      state.newsStatus = action.payload;
+    },
+    setHeading(state, action) {
+      state.headings = action.payload;
+    },
+    setHeadingStatus(state, action) {
+      state.headingStatus = action.payload;
     },
   },
 });
 
-export const { setArticles, setNew, setArticleStatus, setNewsStatus } =
-  newsSlice.actions;
+export const {
+  setArticles,
+  setNews,
+  setArticleStatus,
+  setNewsStatus,
+  setHeading,
+  setHeadingStatus,
+} = newsSlice.actions;
 
 export default newsSlice.reducer;
 
@@ -44,10 +58,10 @@ export function fetchArticles() {
     try {
       const API_KEY = "29da467cdd6840b1b0359a991c789931";
       const response = await fetch(
-        `https://newsapi.org/v2/top-headlines?apiKey=${API_KEY}&language=en&pageSize=20`
+        `https://newsapi.org/v2/top-headlines?apiKey=${API_KEY}&language=en&pageSize=10`
       );
       const data = await response.json();
-      dispatch(setArticles(data.articles));
+      dispatch(setArticles(data.articles || []));
       dispatch(setArticleStatus(STATUSES.IDLE));
     } catch (error) {
       console.error("Failed to fetch articles:", error);
@@ -63,20 +77,38 @@ export function fetchNews() {
     try {
       const API_KEY = "29da467cdd6840b1b0359a991c789931";
       const response = await fetch(
-        `https://newsapi.org/v2/everything?q=bitcoin&apiKey=${API_KEY}`
+        `https://newsapi.org/v2/everything?q=world&apiKey=${API_KEY}&pageSize=5 `
       );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
       const data = await response.json();
-      console.log("newsData", data);
-      dispatch(setNew(data.news)); // Update with data.news
-      dispatch(setNewsStatus(STATUSES.IDLE)); // Set status to IDLE after success
+      dispatch(setNews(data.articles || [])); // Use data.articles instead of data.news
+      dispatch(setNewsStatus(STATUSES.IDLE));
     } catch (error) {
+      console.error("Fetch News Error:", error);
       dispatch(setNewsStatus(STATUSES.ERROR));
-      console.error("Fetch News Error:", error); // Log error for debugging
+    }
+  };
+}
+
+// Thunk for fetching trending headlines using Currents API
+// Thunk for fetching trending headlines using Currents API
+export function fetchHeadings() {
+  return async function fetchHeadingsThunk(dispatch) {
+    dispatch(setHeadingStatus(STATUSES.LOADING));
+    const API_KEY = "s2DfAeoBoAimkq6wHf43tEHbgZR5BQAjCZIRdQP8F_PaDAtW";
+    const BASE_URL = "https://api.currentsapi.services/v1/latest-news";
+
+    try {
+      const response = await fetch(`${BASE_URL}?apiKey=${API_KEY}&language=en`);
+      const data = await response.json();
+
+      console.log("Fetched Data for Headings:", data); // Log the response to see the structure
+
+      // Access 'news' key for headlines
+      dispatch(setHeading(data.news || []));
+      dispatch(setHeadingStatus(STATUSES.IDLE));
+    } catch (error) {
+      console.error("Fetch Headings Error:", error);
+      dispatch(setHeadingStatus(STATUSES.ERROR));
     }
   };
 }

@@ -32,7 +32,7 @@ const Header = () => {
             <Logo />
           </div>
           {/* auth buttons */}
-          <div className="auth flex gap-x-6 py-2">
+          <div className="auth flex gap-x-6 ">
             <button className="bg border border-gray-600 text-gray-900 font-semibold text-sm px-3 py-1 rounded">
               Register
             </button>

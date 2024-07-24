@@ -1,66 +1,152 @@
 import React, { useEffect } from "react";
+import "../index.css";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchArticles, fetchNews } from "../features/newsSlice";
+import { fetchArticles, fetchNews, fetchHeadings } from "../features/newsSlice";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { articles, articleStatus } = useSelector((state) => state.homeArticle);
+  const {
+    articles = [],
+    articleStatus,
+    news = [],
+    newsStatus,
+    headings = [],
+    headingStatus,
+  } = useSelector((state) => state.homeArticle || {});
 
   useEffect(() => {
     dispatch(fetchArticles());
     dispatch(fetchNews());
+    dispatch(fetchHeadings());
   }, [dispatch]);
 
-  // Create a sorted copy of the articles array
+  console.log("articles", articles);
+  console.log("news", news);
+  console.log("headings", headings);
+
   const sortedArticles = [...articles].sort((a) => (a.urlToImage ? -1 : 1));
+  const sortedNews = [...news].sort((a) => (a.urlToImage ? -1 : 1));
 
   return (
-    <section className="w-screen h-screen relative top-40 z-40 flex items-center">
-      <div className="w-[50%] h-screen pl-6 border-b">
-        <section className="container mx-auto py-8">
-          <h1 className="text-3xl font-bold mb-6 pl-2">
-            Top Headlines Across the World
-          </h1>
-          {articleStatus === "loading" && <div>Loading Articles...</div>}
-          {articleStatus === "error" && <div>Failed to load articles.</div>}
-          {articleStatus === "idle" && (
-            <div className="space-y-6">
-              {sortedArticles.length === 0 && <div>No articles available</div>}
-              {sortedArticles.map((article) => (
-                <div
-                  key={article.url}
-                  className="w-[60%] flex flex-col  items-start gap-4 px-2 py-4 bg-white border-b rounded-lg"
-                >
-                  {article.urlToImage && (
-                    <div className="w-full sm:w-full h-64 sm:h-auto overflow-hidden rounded-sm mb-4 sm:mb-0">
-                      <img
-                        src={article.urlToImage}
-                        alt={article.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <h2 className="text-xl font-semibold mb-2">
-                      {article.title}
-                    </h2>
-                    <p className="text-gray-600 mb-4">
-                      {article.description || "No description available"}
-                    </p>
-                    <a
-                      href={article.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
-                    >
-                      Read more
-                    </a>
+    <section className="w-full h-[77vh] relative top-40 z-40 flex justify-between">
+      {/* Article */}
+      <div className="w-[30%] flex flex-col h-full pl-6 pt-3 border-b overflow-y-scroll no-scrollbar">
+        {articleStatus === "loading" && <div>Loading Articles...</div>}
+        {articleStatus === "error" && <div>Failed to load articles.</div>}
+        {articleStatus === "idle" && (
+          <div className="space-y-6">
+            {sortedArticles.length === 0 && <div>No articles available</div>}
+            {sortedArticles.map((article) => (
+              <div
+                key={article.url}
+                className="w-[100%] flex flex-col items-start gap-4 px-2 py-4 bg-white border-b"
+              >
+                {article.urlToImage && (
+                  <div className="w-full sm:w-full h-64 sm:h-auto overflow-hidden rounded-sm mb-4 sm:mb-0">
+                    <img
+                      src={article.urlToImage}
+                      alt={article.title}
+                      className="w-[80%] h-full object-cover"
+                    />
                   </div>
+                )}
+                <div className="flex-1 w-[82%]">
+                  <h2 className="w-full text-left text-[1.1rem] font-semibold mb-2">
+                    {article.title}
+                  </h2>
+                  <p className="w-full text-justify text-gray-600 mb-4">
+                    {article.description || "No description available"}
+                  </p>
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Read more
+                  </a>
                 </div>
-              ))}
-            </div>
-          )}
-        </section>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* News */}
+      <div
+        id="news"
+        className="w-[60%] flex flex-col  px-2 py-0 overflow-y-scroll no-scrollbar"
+      >
+        {newsStatus === "loading" && <div>Loading News...</div>}
+        {newsStatus === "error" && <div>Failed to load news.</div>}
+        {newsStatus === "idle" && (
+          <div className="space-y-6">
+            {sortedNews.length === 0 && <div>No news available</div>}
+            {sortedNews.map((item) => (
+              <div
+                key={item.url}
+                className="w-[90%] flex flex-col items-start gap-4 px-2 py-6 border-b"
+              >
+                {item.urlToImage && (
+                  <div className="w-[80%] overflow-hidden rounded-sm mb-4">
+                    <img
+                      src={item.urlToImage}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 w-[82%]">
+                  <h2 className="w-full text-left text-2xl font-semibold mb-2 text-gray-800">
+                    {item.title}
+                  </h2>
+                  <p className="w-full text-justify text-gray-600 mb-4 font-semibold text-base">
+                    {item.description || "No description available"}
+                  </p>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Read more
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Heading */}
+      <div
+        id="headings"
+        className="w-[40%] flex flex-col p-6 py-0 px-2 overflow-y-scroll no-scrollbar"
+      >
+        {headingStatus === "loading" && <div>Loading Headings...</div>}
+        {headingStatus === "error" && <div>Failed to load headings.</div>}
+        {headingStatus === "idle" && (
+          <div className="">
+            {headings.length === 0 && <div>No headings available</div>}
+            {headings.map((heading) => (
+              <div
+                key={heading.title}
+                className="w-full flex flex-col items-start gap-4 px-2 py-4 bg-white border-b text-gray-800 
+               "
+              >
+                <Link to={heading.url} target="_blank" className="hover:underline">
+                  <h2 className="w-full text-left text-xl font-semibold   font-Robot">
+                    {heading.title}
+                  </h2>
+                </Link>
+                <p className="w-full text-justify text-gray-600  font-Inter font-semibold">
+                  {heading.description || "No description available"}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
