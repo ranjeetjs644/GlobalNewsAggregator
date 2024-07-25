@@ -71,16 +71,21 @@ export function fetchArticles() {
   };
 }
 
-// Thunk for fetching news
+// Thunk for fetching Gnews
 export function fetchNews() {
   return async function fetchNewsThunk(dispatch) {
     dispatch(setNewsStatus(STATUSES.LOADING));
     try {
-      const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
-      const response = await fetch(
-        `https://newsapi.org/v2/everything?q=world&apiKey=${API_KEY}&pageSize=5`
-      );
+      const API_KEY = import.meta.env.VITE_GNEWS_API_KEY; // Adjust if needed
+      const url = `https://gnews.io/api/v4/search?q=example&lang=en&country=us&max=10&apikey=${API_KEY}`;
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
+      console.log("Fetched News Data:", data);
+
       dispatch(setNews(data.articles || []));
       dispatch(setNewsStatus(STATUSES.IDLE));
     } catch (error) {

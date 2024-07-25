@@ -25,27 +25,24 @@ const Home = () => {
   console.log("news", news);
   console.log("headings", headings);
 
-  const sortedArticles = [...articles];
-  const sortedNews = [...news];
-
   return (
-    <section className="w-full h-[100vh] relative top-40 z-40 flex justify-between">
+    <section className="w-full h-[75vh] relative top-40 z-40 flex justify-between">
       {/* Article */}
       <div className="w-[40%] flex flex-col h-full pl-6 pt-3 border-b overflow-y-scroll no-scrollbar">
         {articleStatus === "loading" && <div>Loading Articles...</div>}
         {articleStatus === "error" && <div>Failed to load articles.</div>}
         {articleStatus === "idle" && (
           <div className="space-y-6">
-            {sortedArticles.length === 0 && <div>No articles available</div>}
-            {sortedArticles.map((article) => (
+            {articles.length === 0 && <div>No articles available</div>}
+            {articles.map((article) => (
               <div
                 key={article.url}
                 className="w-[100%] flex flex-col items-start gap-4 px-2 py-4 bg-white border-b"
               >
-                {article.urlToImage && (
+                {article.image && (
                   <div className="w-full sm:w-full h-64 sm:h-auto overflow-hidden rounded-sm mb-4 sm:mb-0">
                     <img
-                      src={article.urlToImage}
+                      src={article.image}
                       alt={article.title}
                       className="w-full h-full object-cover"
                     />
@@ -68,44 +65,33 @@ const Home = () => {
       </div>
 
       {/* News */}
-      <div
-        id="news"
-        className="w-[60%]  flex flex-col  px-1 py-0 overflow-y-scroll no-scrollbar"
-      >
+      <div id="news" className="w-[60%]  flex flex-col  px-1 py-0 no-scrollbar">
         {newsStatus === "loading" && <div>Loading News...</div>}
         {newsStatus === "error" && <div>Failed to load news.</div>}
         {newsStatus === "idle" && (
           <div className="space-y-6">
-            {sortedNews.length === 0 && <div>No news available</div>}
-            {sortedNews.map((item) => (
+            {news.length === 0 && <div>No news available</div>}
+            {news.slice(0, 1).map((item) => (
               <div
                 key={item.url}
                 className="w-[90%] flex flex-col items-start gap-4 px-2 py-6 border-b mx-auto"
               >
-                {item.urlToImage && (
+                {item.image && (
                   <div className="w-[100%] overflow-hidden rounded-sm mb-4">
                     <img
-                      src={item.urlToImage}
+                      src={item.image}
                       alt={item.title}
                       className="w-full h-full object-cover"
                     />
                   </div>
                 )}
-                <div className="flex-1 w-[82%]">
+                <div className="flex-1 ">
                   <h2 className="w-full text-left text-2xl font-semibold mb-2 text-gray-800">
                     {item.title}
                   </h2>
                   <p className="w-full text-justify text-gray-600 mb-4 font-semibold text-base">
                     {item.description || "No description available"}
                   </p>
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    Read more
-                  </a>
                 </div>
               </div>
             ))}
