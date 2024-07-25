@@ -56,7 +56,8 @@ export function fetchArticles() {
   return async function fetchArticlesThunk(dispatch) {
     dispatch(setArticleStatus(STATUSES.LOADING));
     try {
-      const API_KEY = "29da467cdd6840b1b0359a991c789931";
+      const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
+      console.log(API_KEY);
       const response = await fetch(
         `https://newsapi.org/v2/top-headlines?apiKey=${API_KEY}&language=en&pageSize=10`
       );
@@ -75,12 +76,12 @@ export function fetchNews() {
   return async function fetchNewsThunk(dispatch) {
     dispatch(setNewsStatus(STATUSES.LOADING));
     try {
-      const API_KEY = "29da467cdd6840b1b0359a991c789931";
+      const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
       const response = await fetch(
-        `https://newsapi.org/v2/everything?q=world&apiKey=${API_KEY}&pageSize=5 `
+        `https://newsapi.org/v2/everything?q=world&apiKey=${API_KEY}&pageSize=5`
       );
       const data = await response.json();
-      dispatch(setNews(data.articles || [])); // Use data.articles instead of data.news
+      dispatch(setNews(data.articles || []));
       dispatch(setNewsStatus(STATUSES.IDLE));
     } catch (error) {
       console.error("Fetch News Error:", error);
@@ -90,20 +91,15 @@ export function fetchNews() {
 }
 
 // Thunk for fetching trending headlines using Currents API
-// Thunk for fetching trending headlines using Currents API
 export function fetchHeadings() {
   return async function fetchHeadingsThunk(dispatch) {
     dispatch(setHeadingStatus(STATUSES.LOADING));
-    const API_KEY = "s2DfAeoBoAimkq6wHf43tEHbgZR5BQAjCZIRdQP8F_PaDAtW";
+    const API_KEY = import.meta.env.VITE_CURRENT_API_KEY;
     const BASE_URL = "https://api.currentsapi.services/v1/latest-news";
 
     try {
       const response = await fetch(`${BASE_URL}?apiKey=${API_KEY}&language=en`);
       const data = await response.json();
-
-      console.log("Fetched Data for Headings:", data); // Log the response to see the structure
-
-      // Access 'news' key for headlines
       dispatch(setHeading(data.news || []));
       dispatch(setHeadingStatus(STATUSES.IDLE));
     } catch (error) {

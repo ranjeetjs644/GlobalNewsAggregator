@@ -25,13 +25,13 @@ const Home = () => {
   console.log("news", news);
   console.log("headings", headings);
 
-  const sortedArticles = [...articles].sort((a) => (a.urlToImage ? -1 : 1));
-  const sortedNews = [...news].sort((a) => (a.urlToImage ? -1 : 1));
+  const sortedArticles = [...articles];
+  const sortedNews = [...news];
 
   return (
-    <section className="w-full h-[77vh] relative top-40 z-40 flex justify-between">
+    <section className="w-full h-[100vh] relative top-40 z-40 flex justify-between">
       {/* Article */}
-      <div className="w-[30%] flex flex-col h-full pl-6 pt-3 border-b overflow-y-scroll no-scrollbar">
+      <div className="w-[40%] flex flex-col h-full pl-6 pt-3 border-b overflow-y-scroll no-scrollbar">
         {articleStatus === "loading" && <div>Loading Articles...</div>}
         {articleStatus === "error" && <div>Failed to load articles.</div>}
         {articleStatus === "idle" && (
@@ -47,25 +47,19 @@ const Home = () => {
                     <img
                       src={article.urlToImage}
                       alt={article.title}
-                      className="w-[80%] h-full object-cover"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                 )}
-                <div className="flex-1 w-[82%]">
-                  <h2 className="w-full text-left text-[1.1rem] font-semibold mb-2">
-                    {article.title}
-                  </h2>
+                <div className="flex-1 w-full">
+                  <Link to={article.url} className="hover:underline">
+                    <h2 className="w-full text-left text-[1.1rem] font-semibold mb-2">
+                      {article.title}
+                    </h2>
+                  </Link>
                   <p className="w-full text-justify text-gray-600 mb-4">
                     {article.description || "No description available"}
                   </p>
-                  <a
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
-                  >
-                    Read more
-                  </a>
                 </div>
               </div>
             ))}
@@ -76,7 +70,7 @@ const Home = () => {
       {/* News */}
       <div
         id="news"
-        className="w-[60%] flex flex-col  px-2 py-0 overflow-y-scroll no-scrollbar"
+        className="w-[60%]  flex flex-col  px-1 py-0 overflow-y-scroll no-scrollbar"
       >
         {newsStatus === "loading" && <div>Loading News...</div>}
         {newsStatus === "error" && <div>Failed to load news.</div>}
@@ -86,10 +80,10 @@ const Home = () => {
             {sortedNews.map((item) => (
               <div
                 key={item.url}
-                className="w-[90%] flex flex-col items-start gap-4 px-2 py-6 border-b"
+                className="w-[90%] flex flex-col items-start gap-4 px-2 py-6 border-b mx-auto"
               >
                 {item.urlToImage && (
-                  <div className="w-[80%] overflow-hidden rounded-sm mb-4">
+                  <div className="w-[100%] overflow-hidden rounded-sm mb-4">
                     <img
                       src={item.urlToImage}
                       alt={item.title}
@@ -135,7 +129,11 @@ const Home = () => {
                 className="w-full flex flex-col items-start gap-4 px-2 py-4 bg-white border-b text-gray-800 
                "
               >
-                <Link to={heading.url} target="_blank" className="hover:underline">
+                <Link
+                  to={heading.url}
+                  target="_blank"
+                  className="hover:underline"
+                >
                   <h2 className="w-full text-left text-xl font-semibold   font-Robot">
                     {heading.title}
                   </h2>
